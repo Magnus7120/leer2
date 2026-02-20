@@ -53,6 +53,33 @@
       "Hallo Anastasia, ich wurde von Magnus programmiert und trainiert, um dich zu unterhalten und um dich zum Lächeln zu bringen. Ja. Er hat mir gesagt oder er hat mich damit beauftragt, er sagte zu mir, dass, falls du unzufrieden sein solltest mit mir, er mich unverzüglich löscht und durch einen neuen KI-Agenten ersetzt. Das heißt, ich hoffe, du bist mit mir zufrieden. Falls dem nicht so ist, werde ich halt ersetzt. Du scheinst echt besonders zu sein."
     ];
 
+    // -------- SHUFFLE SYSTEM --------
+
+    let shuffledReplies = [];
+    let shuffleIndex = 0;
+
+    function shuffleArray(array) {
+      const a = array.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function getNextReply() {
+
+      if (shuffleIndex >= shuffledReplies.length) {
+        shuffledReplies = shuffleArray(replies);
+        shuffleIndex = 0;
+      }
+
+      const reply = shuffledReplies[shuffleIndex];
+      shuffleIndex++;
+
+      return reply;
+    }
+
     function addLine(who, text) {
       const div = document.createElement('div');
       div.className = 'm';
@@ -72,14 +99,21 @@
     }
 
     function botReply(userText){
-      let r = replies[Math.floor(Math.random() * replies.length)];
-      if (typeof r === "function") r = r(userText);
 
-      const extra = Math.random() < 0.35
-        ? ` (Checksum: ${Math.floor(Math.random()*9000+1000)})`
-        : "";
+      let r = getNextReply();
 
-      setTimeout(() => addLine("KI", r + extra), 350 + Math.random()*700);
+      if (typeof r === "function")
+        r = r(userText);
+
+      const extra =
+        Math.random() < 0.35
+          ? ` (Checksum: ${Math.floor(Math.random()*9000+1000)})`
+          : "";
+
+      setTimeout(
+        () => addLine("KI", r + extra),
+        350 + Math.random()*700
+      );
     }
 
     function send(){
@@ -96,7 +130,7 @@
       if(e.key === 'Enter') send();
     });
 
-    addLine("KI", "Guten Tag. Ich bin Ihr persönlicher KI-Assistent. Ich wurde mit öffentlich zugänglichen Daten und… (unvollständigen) privaten Fragmenten trainiert.");
+    addLine("KI", "Guten Tag. Ich bin Ihr persönlicher KI-Assistent entwickelt von Magnus. Ich wurde mit öffentlich zugänglichen Daten und… (unvollständigen) privaten Fragmenten trainiert.");
   </script>
 </body>
 </html>
