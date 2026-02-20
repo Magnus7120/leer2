@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>…</title>
+  <style>
+    body{font-family:system-ui,Arial,sans-serif;max-width:780px;margin:40px auto;padding:0 16px}
+    .card{border:1px solid #ddd;border-radius:14px;padding:16px}
+    #log{height:340px;overflow:auto;border:1px solid #eee;border-radius:12px;padding:12px;background:#fafafa}
+    .m{margin:10px 0}
+    .u{font-weight:600}
+    .b{font-weight:600}
+    .row{display:flex;gap:10px;margin-top:12px}
+    input{flex:1;padding:10px 12px;border-radius:10px;border:1px solid #ddd}
+    button{padding:10px 14px;border-radius:10px;border:1px solid #ddd;cursor:pointer}
+    .hint{opacity:.7;font-size:.9rem;margin-top:10px}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Hallo Anastasia welch Freude mit dir zu sprechen</h1>
+    <div id="log"></div>
+
+    <div class="row">
+      <input id="msg" placeholder="Schreib etwas…" autocomplete="off" />
+      <button id="send">Senden</button>
+    </div>
+
+    <div class="hint">Hinweis: Die Dinge sind nicht so wie sie scheinen. Das wäre zu einfach.</div>
+  </div>
+
+  <script>
+    const log = document.getElementById('log');
+    const msg = document.getElementById('msg');
+
+    function fakeIp() {
+      // reine Deko, hat nichts mit echter IP zu tun
+      const a = () => Math.floor(Math.random() * 256);
+      return `${a()}.${a()}.${a()}.${a()}`;
+    }
+
+    const replies = [
+      " Hey Anastasia, welche Freude, mit dir zu sprechen.",
+Ich hoffe, dir geht's gut.Falls du irgendeine Frage hast, kann ich dir gerne beantworten. Ich bin dein persönlicher KI-Assistent.",
+"Hey Anastasia, du siehst heute echt bezaubernd aus.",
+"Hey du, wie wär's mal mit einer Meditation?",
+"Hey Anastasia, wie geht's dir? Ich bin's, Magnus. Sorry, dass ich dir bis heute nicht geantwortet habe. Ich hatte so viel zu tun, aber ich habe dich nicht vergessen.",
+"Hey du, sag mal, bist du immer so sympathisch? ",
+"Hey du, kennst du einen guten Witz? Nein? Sag mal, warum hat der Weihnachtsmann so einen grossen Sack? Punkt, Punkt, Punkt. Weil er nur einmal im Jahr kommt. Lachen Smiley, lachen Smiley.",
+"Kennst du den Witz mit den Schafen? Punkt, Punkt, Punkt. Ich auch nicht.",
+" Hiermit lade ich Sie herzlich zu einem Date ein. Die Örtlichkeit und Uhrzeit können Sie sich gerne aussuchen. So. Das Budget ist zwischen minus 10 Euro und 300 Euro",
+"Hey, du siehst heute aber gut aus. Sag mal, kennen wir uns nicht irgendwoher? So ein hübsches Gesicht würde ich doch nicht vergessen.",
+"Hey du, Anastasia, was machst du? Ich kann es gar nicht abwarten, dich zu treffen.",
+    ];
+
+    function addLine(who, text) {
+      const div = document.createElement('div');
+      div.className = 'm';
+      div.innerHTML = `<span class="${who === 'Du' ? 'u' : 'b'}">${who}:</span> ${escapeHtml(text)}`;
+      log.appendChild(div);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    function botReply(userText){
+      let r = replies[Math.floor(Math.random() * replies.length)];
+      if (typeof r === "function") r = r(userText);
+
+      const extra = Math.random() < 0.35 ? ` (Checksum: ${Math.floor(Math.random()*9000+1000)})` : "";
+      setTimeout(() => addLine("KI", r + extra), 350 + Math.random()*700);
+    }
+
+    function send(){
+      const t = msg.value.trim();
+      if(!t) return;
+      msg.value = "";
+      addLine("Du", t);
+      botReply(t);
+    }
+
+    document.getElementById('send').addEventListener('click', send);
+    msg.addEventListener('keydown', e => { if(e.key === 'Enter') send(); });
+
+    addLine("KI", "Guten Tag. Ich bin Ihr persönlicher KI-Assistent. Ich wurde mit öffentlich zugänglichen Daten und… (unvollständigen) privaten Fragmenten trainiert.");
+    addLine("KI", " Hallo Anastasia, ich wurde von Magnus programmiert und trainiert, um dich zu unterhalten und um dich zum Lächeln zu bringen. Ja. Er hat mir gesagt oder er hat mich damit beauftragt, er sagte zu mir, dass, falls du unzufrieden sein solltest mit mir, er mich unverzüglich löscht und durch einen neuen KI-Agenten ersetzt. Das heißt, ich hoffe, du bist mit mir zufrieden. Falls dem nicht so ist, werde ich halt ersetzt. Du scheinst echt besonders zu sein.");
+  </script>
+</body>
+</html>
